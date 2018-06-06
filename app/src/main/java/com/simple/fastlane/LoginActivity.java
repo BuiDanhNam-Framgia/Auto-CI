@@ -12,8 +12,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-        setContentView(R.layout.
-                activity_main);
+        setContentView(R.layout.activity_main);
         findViewById(R.id.link_signup)
                 .setOnClickListener(
                         this);
