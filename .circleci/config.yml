@@ -1,0 +1,81 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/android:api-27-alpha
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Download Android Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run: 
+          name: Test
+          command: sh scripts/saddler.sh
+#       - run:
+#           name: Save test results
+#           command: |
+#             mkdir -p ~/junit/
+#             find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
+#           when: always
+#       - store_test_results:
+#           path: ~/junit
+#       - store_artifacts:
+#           path: ~/junit  
+
+#  test:
+#   override:
+#     - export TERM="dumb"; if [ -e ./gradlew ]; then ./gradlew test;else gradle test;fi
+#     - cp -r app/build/test-results/* $CIRCLE_TEST_REPORTS    
+# test:
+#   post:
+#     - mkdir -p $CIRCLE_TEST_REPORTS/ch/
+#     - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+#       - run:
+#           name: Download Ruby Dependencies
+#           command: bundle check || bundle install --path vendor/bundle
+     
+      # - run:
+      #     name: Run tool test Lint
+      #     command: ./gradlew checkstyle
+      # - store_artifacts:
+      #     path: app/build/reports
+      #     destination: reports
+      # - store_test_results:
+      #     path: app/build/reports/
+      # - run:
+      #    command: find app/build/reports -name "checkstyle*.html" -exec cp {} $CIRCLE_TEST_REPORTS/reports/checkstyle/ \;
+    
+          # command: ./gradlew checkstyle
+#       # - run:
+#       #     name: Run Comment
+#       #     command: |
+#       #       GITHUB_PR_ID=${CIRCLE_PULL_REQUEST##*/}
+#       #       ./gradlew violationCommentsToGitHub -DGITHUB_PULLREQUESTID=$GITHUB_PR_ID -DGITHUB_USERNAME=$CIRCLE_USERNAME -DGITHUB_PASSWORD=$CIRCLE_PW
+# #            ./gradlew dpass -Dsecure=XN8lTY1KDx/8lFNYMhe/hw==:PpoVUrvVid8RDmuy09OdCQ==
+#      
+      #   - store_artifacts:
+      #     path: app/build/reports/
+      #     destination: /reports/
+      # - store_test_results:
+      #     path: app/build/test-results/
+      #     destination: /test-results/
+      #  # Deploy to Crashlytics Beta
+      # - run:
+      #     name: Deploy to Crashlytics Beta
+      #     command: bundle exec fastlane crashlytics_beta
+     # - store_artifacts:
+     #      path: app/build/reports
+     #      destination: reports
+     #  - store_test_results:
+     #      path: app/build/test-results
+

@@ -24,7 +24,7 @@ echo "********************"
 echo "* save outputs     *"
 echo "********************"
 
-LINT_RESULT_DIR="$CIRCLE_ARTIFACTS/lint"
+LINT_RESULT_DIR="$CIRCLE_ARTIFACTS"
 
 mkdir "$LINT_RESULT_DIR"
 cp -v "app/build/reports/checkstyle/checkstyle.xml" "$LINT_RESULT_DIR/"
