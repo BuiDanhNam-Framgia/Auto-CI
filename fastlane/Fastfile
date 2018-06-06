@@ -1,0 +1,86 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+fastlane_require 'dotenv'
+
+before_all do
+  Dotenv.overload '.env.secret'
+end
+
+platform :android do
+
+  desc "Runs all the tests "
+  lane :test_lint do
+    gradle(task: "checkstyle") # clean project then run test with Lint tool
+  end
+
+  #desc "Submit a new Beta Build to Crashlytics Beta"
+  #lane :beta do
+  #  gradle(task: "clean assembleRelease")
+  #  crashlytics
+  
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  #end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    gradle(task: "clean assembleRelease") # clean project then buil apk release
+    supply(
+    	apk:"app/build/outputs/apk/release/app-release.apk",
+    	# skip_upload_apk: true,
+    	skip_upload_aab: true,
+    	skip_upload_metadata: true,
+    	skip_upload_images: true,
+    	skip_upload_screenshots: true, 
+    	)
+    upload_to_play_store
+  end
+
+  lane :beta do
+    gradle(task: 'clean')                           # remove all apk file in build folder
+    gradle(task: 'assemble', build_type: 'release') # build apk release file
+    upload_to_play_store(track: 'beta')             # upload apk to google play console
+  end
+
+  desc " auto screenshots  "
+  lane :auto_screenshot do 
+  	gradle(
+         task: ' clean assembleAndroidTest'   # clean project then buil apk test 
+  		)
+  	capture_android_screenshots(
+  	  clear_previous_screenshots: true ,
+  	  app_apk_path:'app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk',
+  	  tests_apk_path:'app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk'
+  	)
+  end
+  
+  desc "Auto upload a new build to Crashlytics Beta in Fabric "
+  lane :crashlytics_beta do 
+    API_TOKEN_FABRIC = "#{ENV['API_TOKEN_FABRIC']}"
+    KEY_SECRET_FABRIC =  "#{ENV['KEY_SECRET_FABRIC']}"
+    gradle(task: "clean assembleDebug") # clean project then buil apk debug
+      crashlytics(
+
+             api_token: API_TOKEN_FABRIC ,
+             build_secret: KEY_SECRET_FABRIC,
+            apk_path: "app/build/outputs/apk/debug/app-debug.apk" ,#Path to your APK file 
+            emails: "bui.danh.nam@framgia.com",  
+            notes_path: "fastlane/CrashlyticsNote"
+        )
+  end
+end
