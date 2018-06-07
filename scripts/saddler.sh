@@ -24,14 +24,16 @@ echo "********************"
 echo "* save outputs     *"
 echo "********************"
 
-LINT_RESULT_DIR="$CIRCLE_ARTIFACTS"
-
-mkdir "$LINT_RESULT_DIR"
-cp -v "app/build/reports/checkstyle/checkstyle.xml" "$LINT_RESULT_DIR/"
-cp -v "app/build/reports/findbugs/findbugs.xml" "$LINT_RESULT_DIR/"
-cp -v "app/build/reports/pmd/pmd.xml" "$LINT_RESULT_DIR/"
-cp -v "app/build/reports/pmd/cpd.xml" "$LINT_RESULT_DIR/"
-cp -v "app/build/reports/lint-results.xml" "$LINT_RESULT_DIR/"
+LINT_RESULT_DIR="app/build/reports/lint"
+echo $CI_PULL_REQUEST
+echo $REPORTER
+echo $LINT_RESULT_DIR
+#mkdir "$LINT_RESULT_DIR"
+#cp -v "app/build/reports/checkstyle/checkstyle.xml" "$LINT_RESULT_DIR/"
+#cp -v "app/build/reports/findbugs/findbugs.xml" "$LINT_RESULT_DIR/"
+#cp -v "app/build/reports/pmd/pmd.xml" "$LINT_RESULT_DIR/"
+#cp -v "app/build/reports/pmd/cpd.xml" "$LINT_RESULT_DIR/"
+#cp -v "app/build/reports/lint-results.xml" "$LINT_RESULT_DIR/"
 
 if [ -z "${CI_PULL_REQUEST}" ]; then
     # when not pull request
